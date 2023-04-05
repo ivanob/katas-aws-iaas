@@ -4,9 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prebuild": "rm -rf dist",
+    "build": "esbuild ./src/lambda-replier.ts --bundle --platform=node --target=es2020 --outfile=dist/lambda-replier.js",
+    "test": "jest"
   },
   "dependencies": {
+    "esbuild": "^0.17.11",
+    "aws-lambda": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.111",
+    "@types/node": "^18.15.0",
+    "ts-loader": "^9.4.2"
   },
   "keywords": [],
   "author": "",
