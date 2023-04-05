@@ -66,10 +66,12 @@ resource "aws_api_gateway_integration_response" "integration_response" {
 resource "aws_lambda_permission" "permissions_execute_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.lambda_api_replier.function_name}"
+  function_name = aws_lambda_function.lambda_api_replier.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.simple_api.execution_arn}/${aws_api_gateway_deployment.gateway_deployment.stage_name}/*/*"
+  source_arn    = "${aws_api_gateway_rest_api.simple_api.execution_arn}/*/*/*"
   depends_on = [
-    "aws_api_gateway_rest_api.simple_api", "aws_api_gateway_resource.resource_user"
+    "aws_lambda_function.lambda_api_replier",
+    "aws_api_gateway_rest_api.simple_api",
+    "aws_api_gateway_resource.resource_user"
   ]
 }
