@@ -8,7 +8,7 @@ resource "aws_api_gateway_rest_api" "simple_api" {
 resource "aws_api_gateway_resource" "resource_user" {
   rest_api_id = aws_api_gateway_rest_api.simple_api.id
   parent_id   = aws_api_gateway_rest_api.simple_api.root_resource_id
-  path_part   = "{user+}"
+  path_part   = "{${var.resource_user}+}"
 }
 
 resource "aws_api_gateway_method" "method_user" {
