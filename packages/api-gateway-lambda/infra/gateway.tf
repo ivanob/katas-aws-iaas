@@ -11,18 +11,35 @@ resource "aws_api_gateway_resource" "resource_user" {
   path_part   = "{${var.resource_user}+}"
 }
 
-resource "aws_api_gateway_method" "method_user" {
+# Define the methods for each resource (entity)
+resource "aws_api_gateway_method" "method_user_get" {
   rest_api_id   = aws_api_gateway_rest_api.simple_api.id
   resource_id   = aws_api_gateway_resource.resource_user.id
   http_method   = "GET"
   authorization = "NONE"
 }
 
-# Define integration and deployment
-resource "aws_api_gateway_integration" "integration_api_gateway" {
+resource "aws_api_gateway_method" "method_user_post" {
+  rest_api_id   = aws_api_gateway_rest_api.simple_api.id
+  resource_id   = aws_api_gateway_resource.resource_user.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+# Define integration and deployment for each method
+resource "aws_api_gateway_integration" "integration_api_gateway_get_user" {
   rest_api_id             = aws_api_gateway_rest_api.simple_api.id
   resource_id             = aws_api_gateway_resource.resource_user.id
-  http_method             = aws_api_gateway_method.method_user.http_method
+  http_method             = aws_api_gateway_method.method_user_get.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.lambda_api_replier.invoke_arn
+}
+
+resource "aws_api_gateway_integration" "integration_api_gateway_post_user" {
+  rest_api_id             = aws_api_gateway_rest_api.simple_api.id
+  resource_id             = aws_api_gateway_resource.resource_user.id
+  http_method             = aws_api_gateway_method.method_user_post.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.lambda_api_replier.invoke_arn
@@ -32,33 +49,9 @@ resource "aws_api_gateway_deployment" "gateway_deployment" {
   rest_api_id = aws_api_gateway_rest_api.simple_api.id
   stage_name  = "prod"
   depends_on = [
-    aws_api_gateway_method.method_user,
-    aws_api_gateway_integration.integration_api_gateway
-  ]
-}
-
-# This defines the HTTP status code and headers that the API Gateway method returns to the client.
-resource "aws_api_gateway_method_response" "method_response" {
-  rest_api_id = aws_api_gateway_rest_api.simple_api.id
-  resource_id = aws_api_gateway_resource.resource_user.id
-  http_method = aws_api_gateway_method.method_user.http_method
-  status_code = "200"
-  response_models = {
-    "application/json" = "Empty"
-  }
-}
-
-# This defines the HTTP status code and headers that the Lambda function returns to the API Gateway method.
-resource "aws_api_gateway_integration_response" "integration_response" {
-  rest_api_id = aws_api_gateway_rest_api.simple_api.id
-  resource_id = aws_api_gateway_resource.resource_user.id
-  http_method = aws_api_gateway_method.method_user.http_method
-  status_code = "200"
-  response_templates = {
-    "application/json" = "$input.json('$')"
-  }
-  depends_on = [
-    "aws_api_gateway_integration.integration_api_gateway"
+    aws_api_gateway_method.method_user_post,
+    aws_api_gateway_integration.integration_api_gateway_get_user,
+    aws_api_gateway_integration.integration_api_gateway_post_user
   ]
 }
 

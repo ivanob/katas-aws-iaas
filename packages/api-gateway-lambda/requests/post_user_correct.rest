@@ -1,0 +1,8 @@
+POST https://0wht8hixd3.execute-api.eu-west-1.amazonaws.com/prod/user HTTP/1.1
+content-type: application/json
+
+{
+  "age": "25",
+  "name": "Joan",
+  "login": "lol"
+}

@@ -10,12 +10,14 @@
   },
   "dependencies": {
     "esbuild": "^0.17.11",
-    "aws-lambda": "^1.0.7"
+    "aws-lambda": "^1.0.7",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.111",
     "@types/node": "^18.15.0",
-    "ts-loader": "^9.4.2"
+    "ts-loader": "^9.4.2",
+    "@types/uuid": "^9.0.1"
   },
   "keywords": [],
   "author": "",
