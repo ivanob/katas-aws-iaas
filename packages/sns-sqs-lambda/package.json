@@ -1,0 +1,20 @@
+{
+  "name": "sns-sqs-lambda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "npm run build-publisher && npm run build-subscriber",
+    "build-publisher": "esbuild ./src/lambda-publisher.ts --bundle --platform=node --target=es2020 --outfile=dist/lambda-publisher.js",
+    "build-subscriber": "esbuild ./src/lambda-subscriber.ts --bundle --platform=node --target=es2020 --outfile=dist/lambda-subscriber.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1352.0",
+    "dotenv": "^16.0.3"
+  }
+}

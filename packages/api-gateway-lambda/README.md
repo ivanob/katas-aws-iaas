@@ -3,7 +3,7 @@
 The objective is to build an API served by API-gateway and with some lambdas listening
 
  - [X] Add a simple method GET that accepts a query parameter and returns an entity
- - [ ] Add a POST method to put some data in the DB (DB is mocked, so I will just console.log it)
+ - [X] Add a POST method to put some data in the DB (DB is mocked, so I will just console.log it)
  - [ ] Add authentication?
  - [X] Add some different error types in the return (403, 402...)
  - [X] Add tool to document REST calls [1]
@@ -21,3 +21,4 @@ The objective is to build an API served by API-gateway and with some lambdas lis
 - https://www.youtube.com/watch?v=M91vXdjve7A (2/2)
 - https://www.bogotobogo.com/DevOps/AWS/aws-API-Gateway-Lambda-Terraform.php
 - https://stackoverflow.com/questions/56071536/why-is-the-method-response-of-an-api-gateway-different-when-being-created-using
+- Lambda antipatterns: https://www.youtube.com/watch?v=quxk6dZFVlE

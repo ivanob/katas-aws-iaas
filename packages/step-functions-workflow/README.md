@@ -1,0 +1,1 @@
+Synchronous lambda calling
