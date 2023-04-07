@@ -1,7 +1,5 @@
 import * as AWS from "aws-sdk";
-import dotenv from 'dotenv';
 
-dotenv.config();
 const sns = new AWS.SNS({ region: "eu-west-1" });
 
 exports.handler = async (event) => {
@@ -20,7 +18,7 @@ exports.handler = async (event) => {
 
 const sendNotificationMessage = async () => {
   const publishParams = {
-    TopicArn: `arn:aws:sns:us-east-1:${process.env.AWS_ACCOUNT_ID}:${process.env.TOPIC_NAME}`,
+    TopicArn: "arn:aws:sns:eu-west-1:065454142634:weather-topic",
     Message: "Hello from Lambda!", // Replace with the message you want to publish
   };
   try{

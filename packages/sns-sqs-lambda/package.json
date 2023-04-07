@@ -14,7 +14,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.1352.0",
-    "dotenv": "^16.0.3"
+    "aws-sdk": "^2.1352.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.15"
   }
 }

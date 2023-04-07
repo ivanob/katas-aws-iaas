@@ -18,20 +18,29 @@ data "archive_file" "zip_publisher" {
 }
 
 # Permissions to write on the SNS queue
-resource "aws_lambda_permission" "lambda_permission_to_sns" {
-  # Define the permission for Lambda to publish to SNS
-  statement_id  = "AllowLambdaToPublishToSNS"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda_publisher.arn
+resource "aws_iam_policy" "lambda_policy" {
+  name_prefix = "lambda_publish_sns_policy"
 
-  principal = "sns.amazonaws.com"
-
-  source_arn = aws_sns_topic.topic_weather.arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "sns:Publish"
+        ]
+        Effect = "Allow"
+        Resource = aws_sns_topic.topic_weather.arn
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role" "iam_for_lambda" {
   name               = "lambda_role_publisher"
   assume_role_policy = data.aws_iam_policy_document.policy_execute_lambda_publisher.json
+  managed_policy_arns = [
+    aws_iam_policy.lambda_policy.arn
+  ]
 }
 
 data "aws_iam_policy_document" "policy_execute_lambda_publisher" {
