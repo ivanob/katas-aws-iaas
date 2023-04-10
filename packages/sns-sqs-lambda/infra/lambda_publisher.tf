@@ -13,7 +13,7 @@ resource "aws_lambda_function" "lambda_publisher" {
 # I create a cloudwatch log group to allow logging on this lambda
 resource "aws_cloudwatch_log_group" "function_log_group" {
   name              = "/aws/lambda/${aws_lambda_function.lambda_publisher.function_name}"
-  retention_in_days = 2
+  retention_in_days = 3
   lifecycle {
     prevent_destroy = false
   }
