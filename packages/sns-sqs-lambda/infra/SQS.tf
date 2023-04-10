@@ -8,6 +8,10 @@ resource "aws_sns_topic_subscription" "subscription_1_to_sns" {
   topic_arn = aws_sns_topic.topic_weather.arn
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.queue_1.arn
+  filter_policy = jsonencode({
+    city = ["Lisbon", "Portugal"]
+  })
+  filter_policy_scope = "MessageBody"
 }
 
 resource "aws_sqs_queue_policy" "sns_sqs_demo_sqspolicy1" {
@@ -51,6 +55,9 @@ resource "aws_sns_topic_subscription" "subscription_2_to_sns" {
   topic_arn = aws_sns_topic.topic_weather.arn
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.queue_2.arn
+  filter_policy = jsonencode({
+    city = ["Porto", "Portugal"]
+  })
 }
 
 resource "aws_sqs_queue_policy" "sns_sqs_demo_sqspolicy2" {

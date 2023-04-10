@@ -11,7 +11,7 @@ resource "aws_iam_policy" "lambda_policy_for_cloudwatch" {
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ]
-        Effect = "Allow"
+        Effect   = "Allow"
         Resource = "arn:aws:logs:*:*:*"
       }
     ]
@@ -21,7 +21,7 @@ resource "aws_iam_policy" "lambda_policy_for_cloudwatch" {
 # Permissions for the Lambda function to interact with SQS
 resource "aws_iam_policy" "aws_lambda_policy_interact_sqs" {
   name_prefix = "example"
-  policy      = jsonencode({
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
