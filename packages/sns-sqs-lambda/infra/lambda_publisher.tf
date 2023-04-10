@@ -44,43 +44,11 @@ resource "aws_iam_policy" "lambda_policy_for_sns" {
   })
 }
 
-# Permissions to write logs
-resource "aws_iam_policy" "lambda_policy_for_cloudwatch" {
-  name_prefix = "lambda_publish_cloudwatch_policy"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ]
-        Effect = "Allow"
-        Resource = "arn:aws:logs:*:*:*"
-      }
-    ]
-  })
-}
-
 resource "aws_iam_role" "iam_for_lambda" {
   name               = "lambda_role_publisher"
-  assume_role_policy = data.aws_iam_policy_document.policy_execute_lambda_publisher.json
+  assume_role_policy = data.aws_iam_policy_document.policy_execute_lambda.json
   managed_policy_arns = [
     aws_iam_policy.lambda_policy_for_sns.arn,
     aws_iam_policy.lambda_policy_for_cloudwatch.arn,
   ]
-}
-
-data "aws_iam_policy_document" "policy_execute_lambda_publisher" {
-  statement {
-    sid    = ""
-    effect = "Allow"
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
-    }
-    actions = ["sts:AssumeRole"]
-  }
 }
