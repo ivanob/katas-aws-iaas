@@ -4,31 +4,39 @@ resource "aws_sqs_queue" "queue_1" {
 }
 
 # Subscribe the SQS queue to the SNS topic
-resource "aws_sns_topic_subscription" "subscription_2_to_sns" {
+resource "aws_sns_topic_subscription" "subscription_1_to_sns" {
   topic_arn = aws_sns_topic.topic_weather.arn
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.queue_1.arn
 }
 
-resource "aws_sqs_queue_policy" "sns_to_allow_sqs1" {
-  queue_url = aws_sqs_queue.queue_1.url
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sqs:SendMessage"
-        Effect = "Allow"
-        Resource = aws_sqs_queue.queue_1.arn
-
-        Condition = {
-          ArnEquals = {
-            "aws:SourceArn" = aws_sns_topic.topic_weather.arn
-          }
+resource "aws_sqs_queue_policy" "sns_sqs_demo_sqspolicy1" {
+  queue_url = aws_sqs_queue.queue_1.id
+  policy    = <<EOF
+{
+  "Version": "2012-10-17",
+  "Id": "sns_sqs_policy",
+  "Statement": [
+    {
+      "Sid": "Allow SNS publish to SQS",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "sns.amazonaws.com"
+      },
+      "Action": "sqs:SendMessage",
+      "Resource": "${aws_sqs_queue.queue_1.arn}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "${aws_sns_topic.topic_weather.arn}"
         }
       }
-    ]
-  })
+    }
+  ]
+}
+EOF
+  depends_on = [
+    aws_sns_topic.topic_weather
+  ]
 }
 
 #################################################
@@ -39,29 +47,37 @@ resource "aws_sqs_queue" "queue_2" {
 }
 
 # Subscribe the SQS queue to the SNS topic
-resource "aws_sns_topic_subscription" "subscription_1_to_sns" {
+resource "aws_sns_topic_subscription" "subscription_2_to_sns" {
   topic_arn = aws_sns_topic.topic_weather.arn
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.queue_2.arn
 }
 
-resource "aws_sqs_queue_policy" "sns_to_allow_sqs2" {
-  queue_url = aws_sqs_queue.queue_2.url
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sqs:SendMessage"
-        Effect = "Allow"
-        Resource = aws_sqs_queue.queue_2.arn
-
-        Condition = {
-          ArnEquals = {
-            "aws:SourceArn" = aws_sns_topic.topic_weather.arn
-          }
+resource "aws_sqs_queue_policy" "sns_sqs_demo_sqspolicy2" {
+  queue_url = aws_sqs_queue.queue_2.id
+  policy    = <<EOF
+{
+  "Version": "2012-10-17",
+  "Id": "sns_sqs_policy",
+  "Statement": [
+    {
+      "Sid": "Allow SNS publish to SQS",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "sns.amazonaws.com"
+      },
+      "Action": "sqs:SendMessage",
+      "Resource": "${aws_sqs_queue.queue_2.arn}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "${aws_sns_topic.topic_weather.arn}"
         }
       }
-    ]
-  })
+    }
+  ]
+}
+EOF
+  depends_on = [
+    aws_sns_topic.topic_weather
+  ]
 }

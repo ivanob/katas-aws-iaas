@@ -15,3 +15,5 @@ The message delivered is gonna be the weather in a specific town (nameCity, date
 
 ### Bibliography
 - SNS vs SQS vs EventBridge: https://www.youtube.com/watch?v=RoKAEzdcr7k
+- https://serverlessland.com/patterns/sns-sqs-terraform
+- https://medium.com/appetite-for-cloud-formation/setup-lambda-to-event-source-from-sqs-in-terraform-6187c5ac2df1
