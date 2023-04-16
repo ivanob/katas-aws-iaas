@@ -32,9 +32,9 @@ If we dont provide a correct token it should return a `Deny` policy document
 ![](images/allow.png)
 
 The result of querying the gateway endpoint from postman can be saw here, when the token is provided:
-![](images/queryOK.png)
+![](images/responseOK.png)
 ...and when the token is not correct
-![](images/queryKO.png)
+![](images/responseKO.png)
 
 
 ### References
