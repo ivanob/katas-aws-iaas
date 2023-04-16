@@ -8,3 +8,4 @@
 ### References
 - What is API Gateway? Steps: https://www.youtube.com/watch?v=6ULyxuHKxg8
 - The complete guide to custom authorizers https://www.alexdebrie.com/posts/lambda-custom-authorizers/
+- https://www.youtube.com/watch?v=al5I9v5Y-kA
