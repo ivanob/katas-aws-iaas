@@ -1,3 +1,3 @@
 # katas-aws-iaas
 
-This is a collection of small projects to learn some concepts about AWS IAAS. They are small exercises/architectures to proof concepts, test designs, and implement them. The ultimate goal is to improve knowledge in terraform and AWS
+A collection of notes, resources, documentation and POCs mainly related to AWS Infrastructure-as-a-code (IAAS). The final goal are learning purposes and quick prototyping to prove concepts and test designs.
