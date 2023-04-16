@@ -67,7 +67,7 @@ resource "aws_api_gateway_authorizer" "lambda_authorizer" {
   name          = "my_lambda_authorizer"
   rest_api_id   = aws_api_gateway_rest_api.simple_api_auth.id
   authorizer_uri = aws_lambda_function.auth_lambda.invoke_arn
-  authorizer_result_ttl_in_seconds = 300 # Optional: specify a result cache TTL for the authorizer
+  authorizer_result_ttl_in_seconds = 5 # Optional: specify a result cache TTL for the authorizer
   identity_source = "method.request.header.authorizationToken" # Has to match the parameter I am expecting in the auth_lambda in the headers
 
   # Define the type of the authorizer, such as "TOKEN" or "REQUEST"
