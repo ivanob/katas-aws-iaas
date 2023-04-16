@@ -3,10 +3,12 @@
 - [X] Implement a SNS => SQS architecture with lambdas listening at the end of each queue.
 - [X] Logging: set up a logging system and try to centralise
 - [X] Graphic architecture tool to create diagrams [1]
-- [ ] Investigate how to set N lambda instances listening at the same SQS in case it needs to scale up horizontally
+- [X] Investigate how to set N lambda instances listening at the same SQS in case it needs to scale up horizontally [3][4]
 - [ ] Create via terraform a cloudwatch monitor
  
 [1] Using diagrams.net (before draw.io)
+[3] Lambda concurrency: https://docs.aws.amazon.com/lambda/latest/dg/lambda-concurrency.html
+[4] Lambda parameters: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function
 ### Description
 This scenario implements te fanout pattern [2] where one lambda sends a message to a SNS publisher and that message gets spread to different SQSs so it can be processed in parallel. Here is a diagram of the architecture:
 ![](images/diagram_sns_sqs.jpeg)
@@ -29,3 +31,4 @@ Once deployed, you can go to the publisher lambda in aws and send a new message 
 - https://serverlessland.com/patterns/sns-sqs-terraform
 - https://medium.com/appetite-for-cloud-formation/setup-lambda-to-event-source-from-sqs-in-terraform-6187c5ac2df1
 - https://advancedweb.hu/how-to-target-subscribers-in-an-sns-topic/
+- https://dev.to/frosnerd/monitoring-aws-lambda-functions-with-cloudwatch-1nap

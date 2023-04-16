@@ -1,0 +1,23 @@
+{
+  "name": "proj_gateway_lambda_auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "esbuild ./src/lambda-welcomer.ts --bundle --platform=node --target=es2020 --outfile=dist/lambda-welcomer.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "esbuild": "^0.17.11",
+    "aws-lambda": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.111",
+    "@types/node": "^18.15.0",
+    "ts-loader": "^9.4.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
