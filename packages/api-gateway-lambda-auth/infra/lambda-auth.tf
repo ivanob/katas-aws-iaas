@@ -33,4 +33,3 @@ data "aws_iam_policy_document" "policy_execute_lambda_auth" {
     actions = ["sts:AssumeRole"]
   }
 }
-

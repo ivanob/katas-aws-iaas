@@ -1,2 +1,2 @@
-GET https://tqpm9lkaka.execute-api.eu-west-1.amazonaws.com/prod/welcome HTTP/1.1
-authorizationToken: "ABC123"
+GET https://owr9k5r8w5.execute-api.eu-west-1.amazonaws.com/prod/welcome HTTP/1.1
+authorization-token: "ABC123"

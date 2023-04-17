@@ -30,6 +30,7 @@ resource "aws_api_gateway_integration" "integration_api_gateway_get_welcome" {
   uri                     = aws_lambda_function.lambda_api_welcomer.invoke_arn
 }
 
+# Create a stage deployment; in this case prod directly
 resource "aws_api_gateway_deployment" "gateway_deployment" {
   rest_api_id = aws_api_gateway_rest_api.simple_api_auth.id
   stage_name  = "prod"
@@ -45,21 +46,23 @@ resource "aws_lambda_permission" "permissions_execute_lambda_welcomer" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda_api_welcomer.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.simple_api_auth.execution_arn}/*/*/*"
+  source_arn    = "${aws_api_gateway_rest_api.simple_api_auth.execution_arn}/*"
   depends_on = [
     "aws_lambda_function.lambda_api_welcomer",
     "aws_api_gateway_rest_api.simple_api_auth",
     "aws_api_gateway_resource.resource_welcome"
   ]
 }
-resource "aws_lambda_permission" "apigw_permission" {
+resource "aws_lambda_permission" "permissions_execute_lambda_auth" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.auth_lambda.arn
-
-  principal = "apigateway.amazonaws.com"
-
-  source_arn = aws_api_gateway_rest_api.simple_api_auth.execution_arn
+  function_name = aws_lambda_function.auth_lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.simple_api_auth.execution_arn}/*"
+  depends_on = [
+    "aws_lambda_function.auth_lambda",
+    "aws_api_gateway_rest_api.simple_api_auth",
+  ]
 }
 
 # Create the Lambda authorizer for the API Gateway
@@ -67,8 +70,8 @@ resource "aws_api_gateway_authorizer" "lambda_authorizer" {
   name          = "my_lambda_authorizer"
   rest_api_id   = aws_api_gateway_rest_api.simple_api_auth.id
   authorizer_uri = aws_lambda_function.auth_lambda.invoke_arn
-  authorizer_result_ttl_in_seconds = 5 # Optional: specify a result cache TTL for the authorizer
-  identity_source = "method.request.header.authorizationToken" # Has to match the parameter I am expecting in the auth_lambda in the headers
+  authorizer_result_ttl_in_seconds = 0 # Optional: specify a result cache TTL for the authorizer
+  identity_source = "method.request.header.authorization-token" # Has to match the parameter I am expecting in the auth_lambda in the headers
 
   # Define the type of the authorizer, such as "TOKEN" or "REQUEST"
   # For example, you can use "TOKEN" for JWT-based authentication or "REQUEST" for custom request-based authentication

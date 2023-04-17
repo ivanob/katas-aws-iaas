@@ -4,8 +4,10 @@ exports.handler = async (event: APIGatewayRequestAuthorizerEvent): Promise<APIGa
   try {
     // Validate the authorization token from the event
     const headers = event.headers!;
-    const token = headers['authorizationtoken'];
+    const token = headers['authorization-token'];
 
+    console.log(JSON.stringify(token))
+    console.log(JSON.stringify(headers))
     // Perform your authentication logic here, e.g., validate token, check permissions, etc.
     console.log('The token received is: ', token)
     if(token !== 'ABC123'){
