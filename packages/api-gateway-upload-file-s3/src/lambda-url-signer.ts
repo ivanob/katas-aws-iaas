@@ -4,7 +4,7 @@ import { extension as getExtension } from 'es-mime-types';
 import { APIGatewayProxyEvent } from 'aws-lambda';
 
 const client = new S3Client({
-  region: 'eu-west-1'//process.env.AWS_REGION,
+  region: process.env.AWS_REGION,
 });
 
 type FileDescription = {
@@ -42,7 +42,7 @@ exports.handler = async (event: APIGatewayProxyEvent) => {
   
     // Get signed URL from S3
     const putObjectParams = {
-      Bucket: process.env.UPLOAD_BUCKET || 'gateway-to-s3',
+      Bucket: process.env.UPLOAD_BUCKET,
       Key: s3Key,
       ContentType: file.contentType,
     };

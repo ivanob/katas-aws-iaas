@@ -8,6 +8,14 @@ resource "aws_lambda_function" "lambda_url_signer" {
   memory_size      = 128
   timeout          = 5
   source_code_hash = data.archive_file.zip.output_base64sha256
+  environment {
+    variables = {
+      ALLOWED_ORIGIN = "*" #This variable is put in the env vars and can be used in the lambda via process.env
+      URL_EXPIRATION_SECONDS = "300" #300 seconds that the presigned url is valid
+      UPLOAD_BUCKET = var.s3_bucket_name
+      # AWS_REGION is populated automatically for free :)
+    }
+  }
 }
 
 # This data block packs the lambda source code into a zip
