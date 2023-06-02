@@ -1,13 +1,28 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { extension as getExtension } from 'es-mime-types';
+import { APIGatewayProxyEvent } from 'aws-lambda';
 
 const client = new S3Client({
   region: 'eu-west-1'//process.env.AWS_REGION,
 });
 
-exports.handler = async (event: any) => {  
-    const uploadURL = await getUploadURL(event);
+type FileDescription = {
+  filename: string,
+  contentType: string
+}
+
+exports.handler = async (event: APIGatewayProxyEvent) => {
+    const filename = event.queryStringParameters?.filename;
+    const contentType = event.queryStringParameters?.['content-type'];
+    if(!filename || !contentType){
+      return {
+        statusCode: 400,
+        body: JSON.stringify({message: "Bad request. The string query parameters of the GET should contain" +
+        "'filename' and 'content-type'. Example: http://..../?filename=myphoto&content-type=image/jpeg"}),
+      }
+    }
+    const uploadURL = await getUploadURL({filename, contentType});
   
     return {
       statusCode: 200,
@@ -21,18 +36,15 @@ exports.handler = async (event: any) => {
     };
   };
   
-  const getUploadURL = async function(event: any) {
-  
-    const apiRequestId = '12345'; //event.requestContext.requestId || '12345';
-    const contentType = 'image/jpeg'//event.queryStringParameters.contentType || 'image/jpeg'; //THis comes from the URL request like: ?contentType=image/png
-    const extension = getExtension(contentType);
-    const s3Key = `${apiRequestId}.${extension}`;
+  const getUploadURL = async function(file: FileDescription) {
+    const extension = getExtension(file.contentType);
+    const s3Key = `${file.filename}.${extension}`;
   
     // Get signed URL from S3
     const putObjectParams = {
       Bucket: process.env.UPLOAD_BUCKET || 'gateway-to-s3',
       Key: s3Key,
-      ContentType: contentType,
+      ContentType: file.contentType,
     };
     const command = new PutObjectCommand(putObjectParams);
   

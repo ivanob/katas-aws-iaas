@@ -6,13 +6,17 @@ resource "aws_s3_bucket" "gateway_to_s3" {
     Name        = "gateway_to_s3_bucket"
     Environment = "Dev"
   }
-
+  
   cors_rule {
-    allowed_origins = ["*"]
-    allowed_methods = ["PUT"]
+    allowed_origins = ["*"]  # Specifies the list of allowed origins (domains) that 
+    # are allowed to make requests to the S3 bucket. You can use ["*"] to allow requests
+    #  from any domain, or you can provide specific domains.
+    allowed_methods = ["GET", "PUT"] # Specifies the HTTP methods that are allowed 
+    # for cross-origin requests
     allowed_headers = ["*"]
-    expose_headers  = []
-    max_age_seconds = 3000
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000 # Specifies the maximum time, in seconds, that the browser 
+    # can cache the response for a preflight request
   }
 }
 
