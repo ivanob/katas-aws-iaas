@@ -1,0 +1,13 @@
+
+
+POST APPSYNC-URL HTTP/1.1
+content-type: application/graphql
+x-api-key: API_KEY_CHECK_README
+
+{
+    "query": "query MyQuery { getUser(id: \"123456\") { id, name, age } }"
+}
+
+
+# curl -X POST -H "Content-Type: application/graphql" -H "x-api-key: API-KEY" APPSYNC-URL -d '{
+#   "query": "query MyQuery { getUser(id: \"123456\") { id, name, age } }" }"

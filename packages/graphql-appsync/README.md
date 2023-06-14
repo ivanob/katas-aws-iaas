@@ -11,9 +11,16 @@ Another very important feature of AWS AppSync is that it can connect different d
 
 ![](files/diagram-infra.jpg)
 
+### Calling the endpoint from AWS console
 Using the AWS console you can query/mutate data, example:
 ![](files/mutator.png)
 ![](files/resolver.png)
+
+### Calling the endpoint from cURL/REST client
+Although the idea of graphql is to be used with a graphql client like Apollo to handle the queries, it is possible to call directly to the endpoint using <i>cURL</i> or the VSCode extension <i>REST Client</i>. I have an example of call in the <i>/requests</i> folder. Only 2 things to replace in that call are:
+- APPSYNC-URL: to be replaced with the AppSync API endpoint URL that can be found accessing the Appsync section in the AWS console. Then in 'Settings' we can get it from the 'GraphQL endpoint'
+- API-KEY: Can be found in the same 'Settings' screen as before
+![](files/settings-appsync.png)
 
 ### Resources
 - AWS AppSync Introduction: https://www.youtube.com/watch?v=O-nr3983-ZY
