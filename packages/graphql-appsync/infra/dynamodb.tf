@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "database-appsync-users" {
-  name         = "kata-appsync-test"
+  name         = "kata-appsync-table-users"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "id"
   attribute {
