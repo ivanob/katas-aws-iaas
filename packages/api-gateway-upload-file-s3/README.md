@@ -24,3 +24,5 @@ I wont be implementing any authentication here, but in real life would be a good
 - https://www.radishlogic.com/aws/s3/minimum-iam-permission-to-create-s3-presigned-urls/
 - https://medium.com/@aidan.hallett/securing-aws-s3-uploads-using-presigned-urls-aa821c13ae8d
 - Why I am receiving a 403 forbidden: https://medium.com/@lakshmanLD/upload-file-to-s3-using-lambda-the-pre-signed-url-way-158f074cda6c
+- https://github.com/Jaaneek/useFilePicker
+- https://fourtheorem.com/the-illustrated-guide-to-s3-pre-signed-urls/
