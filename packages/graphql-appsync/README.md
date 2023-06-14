@@ -1,6 +1,10 @@
 
-
-### Goal
+### Goals
+- [X] Create Graphql endpoint
+- [X] Add 2 different data-sources
+- [X] Add a cURL example of how to call that endpoint
+- [ ] Create a subscription/websocket endpoint to receive notifications
+### Description
 This is a graphql API exposing different datasources: a dynamoDB collection, some RDS tables...
 The AWS service to achieve this is AWS AppSync. The idea behind graphql is to expose one single endoint that the client is gonna use with a SQL-ish language to query/store data.
 
@@ -11,7 +15,7 @@ Another very important feature of AWS AppSync is that it can connect different d
 
 ![](files/diagram-infra.jpg)
 
-### Calling the endpoint from AWS console
+### Calling the endpoint from AWS console 
 Using the AWS console you can query/mutate data, example:
 ![](files/mutator.png)
 ![](files/resolver.png)
@@ -19,7 +23,7 @@ Using the AWS console you can query/mutate data, example:
 ### Calling the endpoint from cURL/REST client
 Although the idea of graphql is to be used with a graphql client like Apollo to handle the queries, it is possible to call directly to the endpoint using <i>cURL</i> or the VSCode extension <i>REST Client</i>. I have an example of call in the <i>/requests</i> folder. Only 2 things to replace in that call are:
 - APPSYNC-URL: to be replaced with the AppSync API endpoint URL that can be found accessing the Appsync section in the AWS console. Then in 'Settings' we can get it from the 'GraphQL endpoint'
-- API-KEY: Can be found in the same 'Settings' screen as before
+- API-KEY: Can be found in the same 'Settings' screen as above.
 ![](files/settings-appsync.png)
 
 ### Resources

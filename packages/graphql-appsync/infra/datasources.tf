@@ -8,3 +8,13 @@ resource "aws_appsync_datasource" "datasource-dynamodb" {
     table_name = "${aws_dynamodb_table.database-appsync-users.name}"
   }
 }
+
+resource "aws_appsync_datasource" "datasource-lambda" {
+  api_id           = aws_appsync_graphql_api.appsync_kata.id
+  name             = "datasource_lambda_randomizer"
+  service_role_arn = "${aws_iam_role.example.arn}"
+  type             = "AWS_LAMBDA"
+  lambda_config {
+    function_arn = aws_lambda_function.lambda_datasource.arn
+  }
+}

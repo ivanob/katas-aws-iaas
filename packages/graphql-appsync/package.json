@@ -1,0 +1,19 @@
+{
+  "name": "proj-appsync",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "esbuild ./src/lambda-randomizer.ts --bundle --platform=node --target=es2020 --outfile=dist/lambda-randomizer.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "esbuild": "^0.17.11"
+  },
+  "devDependencies": {
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

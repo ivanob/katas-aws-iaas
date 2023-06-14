@@ -10,8 +10,13 @@ type User {
   city: String
 }
 
+type Random {
+  number: Int
+}
+
 type Query {
   getUser(id: ID!): User
+  getRandom: Int
 }
 
 schema {

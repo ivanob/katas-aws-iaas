@@ -21,8 +21,8 @@ EOF
 
 resource "aws_appsync_resolver" "put_user_mutator" {
   api_id = aws_appsync_graphql_api.appsync_kata.id
-  type = "Mutation"
-  field = "putUser"
+  type   = "Mutation"
+  field  = "putUser"
 
   data_source = aws_appsync_datasource.datasource-dynamodb.name
 
@@ -38,4 +38,18 @@ resource "aws_appsync_resolver" "put_user_mutator" {
 EOF
 
   response_template = "$util.toJson($ctx.result)"
+}
+
+
+resource "aws_appsync_resolver" "get_random_resolver" {
+  api_id = aws_appsync_graphql_api.appsync_kata.id
+  type   = "Query"
+  field  = "getRandom"
+
+  data_source = aws_appsync_datasource.datasource-lambda.name
+
+  request_template = null
+  response_template = <<EOF
+    $util.toJson($ctx.result)
+  EOF
 }
