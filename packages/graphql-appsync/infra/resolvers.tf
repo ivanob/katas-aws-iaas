@@ -48,7 +48,15 @@ resource "aws_appsync_resolver" "get_random_resolver" {
 
   data_source = aws_appsync_datasource.datasource-lambda.name
 
-  request_template = null
+  request_template = <<EOF
+    {
+      "version": "2018-05-29",
+      "operation": "Invoke",
+      "payload": {
+        "arguments": $utils.toJson($context.arguments)
+      }
+    }
+  EOF
   response_template = <<EOF
     $util.toJson($ctx.result)
   EOF

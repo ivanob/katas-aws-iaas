@@ -11,12 +11,12 @@ type User {
 }
 
 type Random {
-  number: Int
+  random: Int
 }
 
 type Query {
   getUser(id: ID!): User
-  getRandom: Int
+  getRandom: Random
 }
 
 schema {
