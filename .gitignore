@@ -106,3 +106,7 @@ dist
 **/.terraform/
 .DS_Store
 **/.DS_Store
+
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfstate.backup

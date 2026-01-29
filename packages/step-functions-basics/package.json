@@ -1,0 +1,18 @@
+{
+  "name": "step-functions-basics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "tsc",
+    "build": "esbuild ./src/lambda-choice.ts --bundle --platform=node --target=es2020 --outfile=dist/lambda-choice.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}
