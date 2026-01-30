@@ -1,5 +1,5 @@
 resource "aws_vpc" "kata1_vpc" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "10.0.0.0/16" # ~65,000 IP addresses
 
   tags = {
     Name = "kata1-vpc"
@@ -41,7 +41,7 @@ resource "aws_route_table" "kata1_private_route_table" {
 }
 
 ### DEFINE THE SUBNETS AND ASSOCIATIONS ###
-
+### PUBLIC SUBNETS ###
 # Public subnets (for ALB and resources needing internet access)
 resource "aws_subnet" "kata1_public_subnet1" {
   vpc_id                  = aws_vpc.kata1_vpc.id
@@ -76,6 +76,7 @@ resource "aws_route_table_association" "kata1_public_subnet2_association" {
   route_table_id = aws_route_table.kata1_public_route_table.id
 }
 
+### PRIVATE SUBNETS ###
 # Associate the private subnets with the private route table
 resource "aws_route_table_association" "kata1_private_subnet1_association" {
   subnet_id      = aws_subnet.kata1_private_subnet1.id
