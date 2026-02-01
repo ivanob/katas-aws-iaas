@@ -1,0 +1,10 @@
+# Cargo.toml
+[package]
+name = "kata1-api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+hyper = { version = "1", features = ["full"] }
