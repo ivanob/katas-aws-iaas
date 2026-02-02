@@ -24,3 +24,36 @@ Calls ALB module (passing VPC outputs)
 S3 backend commented out (using local state)
 4. Provider (providers.tf)
 AWS provider configured for eu-north-1
+
+
+<h3>How to push the local docker image to the AWS repo (ECR)</h3>
+<h4>Create repository</h4>
+
+```
+aws ecr create-repository --repository-name kata1-api --region eu-north-1
+```
+
+<h4>Authenticate docker to ECR</h4>
+
+```
+aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.eu-north-1.amazonaws.com
+```
+
+<h4>Tag the image to ECR</h4>
+
+```
+docker tag kata1-rust-api:latest <your-account-id>.dkr.ecr.eu-north-1.amazonaws.com/kata1-api:latest
+```
+
+<h4>Push the Image to ECR</h4>
+
+```
+docker push <your-account-id>.dkr.ecr.eu-north-1.amazonaws.com/kata1-api:latest
+```
+
+<h3>Config</h3>
+Create a .env file in the root path of this kata with this format
+```
+AWS_ACCOUNT_ID=123456789012
+REGION=eu-north-1
+```

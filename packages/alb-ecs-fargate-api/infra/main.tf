@@ -19,12 +19,11 @@ module "alb_ecs_fargate" {
 
 module "ecs" {
   source = "./ecs"
-
   vpc_id                 = module.vpc.vpc_id
   private_subnet_ids     = [module.vpc.private_subnet1_id, module.vpc.private_subnet2_id]
-  alb_security_group_id  = module.ALB.alb_security_group_id
-  target_group_arn       = module.ALB.target_group_arn
-  alb_listener_arn       = module.ALB.alb_listener_arn
-  docker_image           = var.docker_image
-  aws_region             = var.aws_region
+  alb_security_group_id  = module.alb_ecs_fargate.alb_security_group_id
+  target_group_arn       = module.alb_ecs_fargate.target_group_arn
+  alb_listener_arn       = module.alb_ecs_fargate.alb_listener_arn
+  docker_image           = "${var.account_id}.dkr.ecr.eu-north-1.amazonaws.com/kata1-api:latest"
+  aws_region             = var.region
 }
