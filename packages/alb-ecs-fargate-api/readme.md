@@ -39,6 +39,15 @@ aws ecr create-repository --repository-name kata1-api --region eu-north-1
 aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.eu-north-1.amazonaws.com
 ```
 
+<h4>Create the image</h4>
+
+```
+docker buildx build \
+  --platform linux/amd64 \
+  -t kata1-rust-api:latest \
+  .
+```
+
 <h4>Tag the image to ECR</h4>
 
 ```

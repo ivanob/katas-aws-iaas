@@ -40,6 +40,30 @@ resource "aws_route_table" "kata1_private_route_table" {
   }
 }
 
+### Allow outbounds from private subnets to internet via NAT Gateway ###
+### This is needed for ECS tasks to pull container images and for updates ###
+# Allocate an Elastic IP for the NAT Gateway
+resource "aws_eip" "kata1_nat_eip" {
+}
+
+# Create the NAT Gateway in a public subnet
+resource "aws_nat_gateway" "kata1_nat" {
+  allocation_id = aws_eip.kata1_nat_eip.id
+  subnet_id     = aws_subnet.kata1_public_subnet1.id
+
+  tags = {
+    Name = "kata1-nat-gateway"
+  }
+}
+
+# Add a route in the private route table for outbound internet
+resource "aws_route" "kata1_private_nat_route" {
+  route_table_id         = aws_route_table.kata1_private_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.kata1_nat.id
+}
+
+
 ### DEFINE THE SUBNETS AND ASSOCIATIONS ###
 ### PUBLIC SUBNETS ###
 # Public subnets (for ALB and resources needing internet access)
