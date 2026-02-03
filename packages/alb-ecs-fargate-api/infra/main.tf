@@ -24,6 +24,6 @@ module "ecs" {
   alb_security_group_id  = module.alb_ecs_fargate.alb_security_group_id
   target_group_arn       = module.alb_ecs_fargate.target_group_arn
   alb_listener_arn       = module.alb_ecs_fargate.alb_listener_arn
-  docker_image           = "${var.account_id}.dkr.ecr.eu-north-1.amazonaws.com/kata1-api:latest"
+  docker_image           = "${var.account_id}.dkr.ecr.${var.region}.amazonaws.com/kata1-api:latest"
   aws_region             = var.region
 }

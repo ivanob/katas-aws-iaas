@@ -1,14 +1,14 @@
 {
   "name": "alb-ecs-fargate-api",
   "version": "1.0.0",
-  "description": "This is an implementation of an API in RUST following this schema:",
+  "description": "This is an implementation of an API in RUST following this schema",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "docker:build": "docker build -t alb-ecs-fargate-api .",
     "docker:run": "docker run -p 8080:8080 alb-ecs-fargate-api",
-    "tf:apply": "cd infra && dotenv -- terraform apply -var=\"account_id=$AWS_ACCOUNT_ID\" -var=\"region=$REGION\" && cd ..",
-    "tf:destroy": "cd infra && dotenv -- terraform destroy -var=\"account_id=$AWS_ACCOUNT_ID\" -var=\"region=$REGION\" && cd .."
+    "tf:apply": "cd infra && terraform apply && cd ..",
+    "tf:destroy": "cd infra && terraform destroy && cd .."
   },
   "keywords": [],
   "author": "",

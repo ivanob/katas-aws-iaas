@@ -52,8 +52,8 @@ docker push <your-account-id>.dkr.ecr.eu-north-1.amazonaws.com/kata1-api:latest
 ```
 
 <h3>Config</h3>
-Create a .env file in the root path of this kata with this format
+Create a terraform.tfvars file in the infra folder of this kata with this format
 ```
-AWS_ACCOUNT_ID=123456789012
-REGION=eu-north-1
+account_id="123456..."
+region="eu-north-1"
 ```
