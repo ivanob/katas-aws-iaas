@@ -41,6 +41,8 @@ resource "aws_route_table" "kata1_private_route_table" {
 }
 
 ### Allow outbounds from private subnets to internet via NAT Gateway ###
+# This means that resources in private subnets can access the internet, 
+# but are not directly accessible from the internet.
 ### This is needed for ECS tasks to pull container images and for updates ###
 # Allocate an Elastic IP for the NAT Gateway
 resource "aws_eip" "kata1_nat_eip" {

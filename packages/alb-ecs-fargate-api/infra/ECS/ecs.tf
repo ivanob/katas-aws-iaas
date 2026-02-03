@@ -112,7 +112,7 @@ resource "aws_ecs_task_definition" "kata1_api" {
   container_definitions = jsonencode([
     {
       name      = "kata1-api-container"
-      image     = var.docker_image # You'll need to provide this
+      image     = var.docker_image # This is the ECR image I pushed manually
       essential = true
       
       portMappings = [

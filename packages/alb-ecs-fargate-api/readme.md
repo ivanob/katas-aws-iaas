@@ -66,3 +66,6 @@ Create a terraform.tfvars file in the infra folder of this kata with this format
 account_id="123456..."
 region="eu-north-1"
 ```
+
+<h2>How to test that it all works?</h2>
+You can access from the browser to http://kata1-alb-[AWS_ACCOUNT_ID].eu-north-1.elb.amazonaws.com/
