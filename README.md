@@ -10,7 +10,11 @@ A collection of notes, resources, documentation and POCs mainly related to AWS I
  - [X] static-s3-cloudfront
  - [X] Upload documents via gateway + S3: api-gateway-upload-file-s3
  - [X] Graphql in api gateway
+ - [X] ALB (ELB) to ECS with Fargate tasks (instead of EC2)
+ - [ ] Websocket implementation with api gateway and lambdas (Rust) + Memcached (Redis) storage
  - [ ] Authentication via Cognito
+ - [ ] Kafka
+ - [ ] SSO -> Single Sign On. frontend with 2 different domains sharing the same login credentials
 # ToDo
  - [ ] Step functions implementation
  - [ ] Deployment of frontend in Amplify
