@@ -1,13 +1,13 @@
 # This block is the definiton of the lambda itself
 resource "aws_lambda_function" "lambda_handle_game_actions" {
-  filename         = data.archive_file.zip_get_artists.output_path
+  filename         = data.archive_file.zip_lambda_handle_game_actions.output_path
   function_name    = "handler_kata2_lambda_handle_game_actions"
-  handler          = "lambda-get-artists.getArtists"
+  handler          = "main.handler"
   runtime          = "nodejs20.x"
-  role             = module.iam_for_lambda_get_artists.role_arn
+  role             = aws_iam_role.iam_for_lambda_game_actions.arn
   memory_size      = 128
-  timeout          = 10
-  source_code_hash = data.archive_file.zip_get_artists.output_base64sha256
+  timeout          = 5
+  source_code_hash = data.archive_file.zip_lambda_handle_game_actions.output_base64sha256
   environment {
     variables = {
       ENVIRONMENT = "production"
@@ -15,15 +15,30 @@ resource "aws_lambda_function" "lambda_handle_game_actions" {
   }
 }
 
-# This data block packs the lambda source code into a zip
-data "archive_file" "zip_game_actions" {
+data "archive_file" "zip_lambda_handle_game_actions" {
   type        = "zip"
-  source_file = "../dist/lambda-release.js"
-  output_path = "../dist/lambda-release"
+  source_file = "./dist/lambda-release"
+  output_path = "./dist/lambda-release.zip"
 }
 
-module "common_logging_config_handle_game_actions" {
-  source     = "./logging"
-  iam_lambda_role_id  = "${module.iam_for_lambda_handle_game_actions.role_id}"
-  function_name = "${aws_lambda_function.lambda_handle_game_actions.function_name}"
+resource "aws_iam_role" "iam_for_lambda_game_actions" {
+  name               = "role_kata2_lambda_handle_game_actions"
+  assume_role_policy = data.aws_iam_policy_document.policy_execute_lambda.json
 }
+data "aws_iam_policy_document" "policy_execute_lambda" {
+  statement {
+    sid    = ""
+    effect = "Allow"
+    principals {
+      identifiers = ["lambda.amazonaws.com"]
+      type        = "Service"
+    }
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+# module "common_logging_config_handle_game_actions" {
+#   source     = "./logging"
+#   iam_lambda_role_id  = "${module.iam_for_lambda_handle_game_actions.role_id}"
+#   function_name = "${aws_lambda_function.lambda_handle_game_actions.function_name}"
+# }
