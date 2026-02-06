@@ -4,4 +4,18 @@ terraform {
 
 module "gateway"{
     source = "./gateway"
+    vpc_id = module.vpc.vpc_id
+    depends_on = [ module.vpc ]
 }
+
+module "vpc" {
+    source = "./vpc"
+} 
+
+module "redis" {
+    source = "./redis"
+    vpc_id = module.vpc.vpc_id
+    private_subnet_id = module.vpc.private_subnet_id
+    redis_sg_id = module.vpc.lambda_sg_id
+    depends_on = [ module.vpc ]
+} 
