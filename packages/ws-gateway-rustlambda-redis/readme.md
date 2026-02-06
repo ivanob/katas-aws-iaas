@@ -7,6 +7,8 @@ Gateway → keeps connections open
 Lambda → stateless game logic. It receives route keys from clients and performs the operations in memory (Redis)
 Redis → cheap, fast, shared memory for game state
 
+![Architecture diagram](./res/diagram-kata2.png)
+
 <h3>Instructions</h3>
 In order to compile the rust code it is needed the package cargo-lambda
 `cargo install cargo-lambda`
