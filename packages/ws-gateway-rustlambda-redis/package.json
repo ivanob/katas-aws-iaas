@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:lambda": "cd src && cargo lambda build --release --target aarch64-unknown-linux-musl",
-    "copy:lambda": "mkdir -p ./infra/dist && cp src/target/lambda/lambda-handle-game-actions/bootstrap ./infra/dist/lambda-release",
+    "copy:lambda": "mkdir -p ./infra/dist && cp src/target/lambda/lambda-handle-game-actions/bootstrap ./infra/dist/bootstrap",
     "tf:apply": "pnpm build:lambda && pnpm copy:lambda && cd infra/ && terraform apply && cd ..",
     "tf:destroy": "cd infra && terraform destroy && cd .."
   },
