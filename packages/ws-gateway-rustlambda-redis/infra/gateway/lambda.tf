@@ -11,7 +11,8 @@ resource "aws_lambda_function" "lambda_handle_game_actions" {
   source_code_hash = data.archive_file.zip_lambda_handle_game_actions.output_base64sha256
   environment {
     variables = {
-      ENVIRONMENT = "production"
+      ENVIRONMENT = "production",
+      REDIS_URL = "redis://${var.redis_endpoint}:6379"
     }
   }
 }

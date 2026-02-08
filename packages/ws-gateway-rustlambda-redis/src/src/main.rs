@@ -1,5 +1,6 @@
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde_json::{json, Value};
+use redis_handler::RedisHandler;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -72,6 +73,9 @@ async fn handle_list_games(event: &Value, message: &Value) -> Result<Value, Erro
     // TODO: Game logic - create or join a game
     // let player_name = message["playerName"].as_str();
     // let game_id = message["gameId"].as_str();
+
+    let mut redis = RedisHandler::connect_redis(&get_redis_url()).await?;
+    redis.create_game(connection_id).await?;
     
     Ok(json!({ 
         "statusCode": 200,

@@ -1,9 +1,10 @@
-# katas-aws-iaas
+# katas-aws-iac
 
-A collection of notes, resources, documentation and POCs mainly related to AWS Infrastructure-as-a-code (IAAS). The final goal is learning purposes and quick prototyping to prove concepts and test designs.
+A collection of notes, resources, documentation and POCs mainly related to AWS Infrastructure as code (IaC). The final goal is learning purposes and quick prototyping to prove concepts and test designs.
 
 # Scenarios
-<<Here it goes the list of scenarios I have created and a brief description>>
+Here it goes the list of scenarios I have created and a brief description:
+
  - [X] api-gateway-lambda
  - [X] api-gateway-lambda-auth
  - [X] sns-sqs-lambda
@@ -15,6 +16,9 @@ A collection of notes, resources, documentation and POCs mainly related to AWS I
  - [ ] Authentication via Cognito
  - [ ] Kafka
  - [ ] SSO -> Single Sign On. frontend with 2 different domains sharing the same login credentials
+ - [ ] gRPC protocol
+
+
 # ToDo
  - [ ] Step functions implementation
  - [ ] Deployment of frontend in Amplify

@@ -5,6 +5,7 @@ terraform {
 module "gateway"{
     source = "./gateway"
     vpc_id = module.vpc.vpc_id
+    redis_endpoint = module.redis.redis_endpoint
     depends_on = [ module.vpc ]
 }
 
