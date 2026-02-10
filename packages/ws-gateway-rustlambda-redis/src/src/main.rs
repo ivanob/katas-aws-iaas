@@ -1,5 +1,6 @@
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde_json::{json, Value};
+mod redis_handler;
 use redis_handler::RedisHandler;
 
 #[tokio::main]
@@ -7,25 +8,39 @@ async fn main() -> Result<(), Error> {
     lambda_runtime::run(service_fn(handler)).await
 }
 
+fn get_redis_url() -> String {
+    std::env::var("REDIS_URL").unwrap_or_else(|_| "redis://127.0.0.1:6379".to_string())
+}
+
+fn extract_connection_id(event: &Value) -> Option<&str> {
+    event
+        .get("requestContext")?
+        .get("connectionId")?
+        .as_str()
+}
+
 async fn handler(event: LambdaEvent<Value>) -> Result<Value, Error> {
     let (event, _context) = event.into_parts();
     println!("Received event: {:?}", event);
+    let user_conn_id = extract_connection_id(&event)
+        .ok_or_else(|| Error::from("Missing connectionId in requestContext"))?;
+    println!("Connection ID: {:?}", user_conn_id.to_string());
     
     let route_key = event["requestContext"]["routeKey"]
         .as_str()
         .unwrap_or("unknown");
     
     let response = match route_key {
-        "$connect" => handle_connect(&event).await?,
-        "$disconnect" => handle_disconnect(&event).await?,
-        "$default" => handle_default(&event).await?,
-        _ => handle_unknown(&event).await?,
+        "$connect" => handle_connect(&event),
+        "$disconnect" => handle_disconnect(&event),
+        "$default" => handle_default(&event, user_conn_id),
+        _ => handle_unknown(&event),
     };
     
-    Ok(response)
+    Ok(response?)
 }
 
-async fn handle_connect(event: &Value) -> Result<Value, Error> {
+fn handle_connect(event: &Value) -> Result<Value, Error> {
     println!("Client connecting...");
     // TODO: Store connection ID in DynamoDB/Redis
     // let connection_id = event["requestContext"]["connectionId"].as_str();
@@ -36,7 +51,7 @@ async fn handle_connect(event: &Value) -> Result<Value, Error> {
     }))
 }
 
-async fn handle_disconnect(event: &Value) -> Result<Value, Error> {
+fn handle_disconnect(event: &Value) -> Result<Value, Error> {
     println!("Client disconnecting...");
     // TODO: Remove connection ID from DynamoDB/Redis
     // let connection_id = event["requestContext"]["connectionId"].as_str();
@@ -47,7 +62,7 @@ async fn handle_disconnect(event: &Value) -> Result<Value, Error> {
     }))
 }
 
-async fn handle_default(event: &Value) -> Result<Value, Error> {
+fn handle_default(event: &Value, user_conn_id: &str) -> Result<Value, Error> {
     println!("Processing game action...");
     
     // Parse the message body
@@ -58,9 +73,9 @@ async fn handle_default(event: &Value) -> Result<Value, Error> {
     let action = message["action"].as_str().unwrap_or("unknown");
     
     match action {
-        "list" => handle_list_games(event, &message).await,
-        "create" => handle_create_game(event, &message).await,
-        "reset" => handle_reset_game(event, &message).await,
+        "list" => handle_list_games(event, &message, user_conn_id),
+        "create" => handle_create_game(event, &message),
+        "reset" => handle_reset_game(event, &message),
         _ => Ok(json!({ 
             "statusCode": 400,
             "body": format!("Unknown action: {}", action)
@@ -68,14 +83,14 @@ async fn handle_default(event: &Value) -> Result<Value, Error> {
     }
 }
 
-async fn handle_list_games(event: &Value, message: &Value) -> Result<Value, Error> {
+fn handle_list_games(event: &Value, message: &Value, user_conn_id: &str) -> Result<Value, Error> {
     println!("Player listing games: {:?}", message);
     // TODO: Game logic - create or join a game
     // let player_name = message["playerName"].as_str();
     // let game_id = message["gameId"].as_str();
 
-    let mut redis = RedisHandler::connect_redis(&get_redis_url()).await?;
-    redis.create_game(connection_id).await?;
+    let mut redis = RedisHandler::connect_redis(&get_redis_url())?;
+    redis.create_game(user_conn_id)?;
     
     Ok(json!({ 
         "statusCode": 200,
@@ -83,7 +98,7 @@ async fn handle_list_games(event: &Value, message: &Value) -> Result<Value, Erro
     }))
 }
 
-async fn handle_create_game(event: &Value, message: &Value) -> Result<Value, Error> {
+fn handle_create_game(event: &Value, message: &Value) -> Result<Value, Error> {
     println!("Player creating game: {:?}", message);
     // TODO: Game logic - validate and process move
     // let position = message["position"].as_i64();
@@ -95,7 +110,7 @@ async fn handle_create_game(event: &Value, message: &Value) -> Result<Value, Err
     }))
 }
 
-async fn handle_reset_game(event: &Value, message: &Value) -> Result<Value, Error> {
+fn handle_reset_game(event: &Value, message: &Value) -> Result<Value, Error> {
     println!("Resetting game: {:?}", message);
     // TODO: Game logic - reset game state
     // let game_id = message["gameId"].as_str();
@@ -106,7 +121,7 @@ async fn handle_reset_game(event: &Value, message: &Value) -> Result<Value, Erro
     }))
 }
 
-async fn handle_unknown(event: &Value) -> Result<Value, Error> {
+fn handle_unknown(event: &Value) -> Result<Value, Error> {
     println!("Unknown route");
     Ok(json!({ 
         "statusCode": 400,

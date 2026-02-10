@@ -71,6 +71,8 @@ Create a new game
     id: "111"
 }
 ```
+Note: the id of the game it is gonna be the connection ID of the creator. i.e: "connectionId": "YkFNQccvAi0CETA="
+
 Join game
 ```
 {

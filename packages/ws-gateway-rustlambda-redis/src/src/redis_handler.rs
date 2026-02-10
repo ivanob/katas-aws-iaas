@@ -1,14 +1,14 @@
-use redis::AsyncCommands;
+use redis::Commands;
 use lambda_runtime::Error;
 
 pub struct RedisHandler {
-    connection: redis::aio::MultiplexedConnection,
+    connection: redis::Connection,
 }
 
 impl RedisHandler {
-    pub async fn connect_redis(redis_url: &str) -> Result<Self, Error> {
+    pub fn connect_redis(redis_url: &str) -> Result<Self, Error> {
         let client = redis::Client::open(redis_url)?;
-        let connection = client.get_multiplexed_async_connection().await?;
+        let connection = client.get_connection()?;
         Ok(RedisHandler { connection })
     }
 
@@ -26,25 +26,22 @@ impl RedisHandler {
     //     Ok(())
     // }
 
-    pub async fn create_game(&mut self, game_id: &str) -> Result<(), Error> {
-        const initial_state = "{\"board\":[[0,0,0],[0,0,0],[0,0,0]],\"currentPlayer\":1}";
+    pub fn create_game(&mut self, game_id: &str) -> Result<(), Error> {
+        const INITIAL_STATE: &str = "{\"board\":[[0,0,0],[0,0,0],[0,0,0]],\"currentPlayer\":1}";
         self.connection
-            .set::<_, _, ()>(format!("game:{}", game_id), initial_state)
-            .await?;
+            .set::<_, _, ()>(format!("game:{}", game_id), INITIAL_STATE)?;
         Ok(())
     }
 
-    pub async fn join_game(&mut self, game_id: &str) -> Result<String, Error> {
+    pub fn join_game(&mut self, game_id: &str) -> Result<String, Error> {
         let game_state = self.connection
-            .get::<_, String>(format!("game:{}", game_id))
-            .await?;
+            .get::<_, String>(format!("game:{}", game_id))?;
         Ok(game_state)
     }
 
-    pub async fn list_games(&mut self) -> Result<Vec<String>, Error> {
+    pub fn list_games(&mut self) -> Result<Vec<String>, Error> {
         let keys: Vec<String> = self.connection
-            .keys("game:*")
-            .await?;
+            .keys("game:*")?;
         Ok(keys)
     }
 }
