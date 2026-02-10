@@ -89,12 +89,14 @@ fn handle_list_games(event: &Value, message: &Value, user_conn_id: &str) -> Resu
     // let player_name = message["playerName"].as_str();
     // let game_id = message["gameId"].as_str();
 
+    println!("Connecting to Redis to list games...");
     let mut redis = RedisHandler::connect_redis(&get_redis_url())?;
-    redis.create_game(user_conn_id)?;
-    
+    println!("Connected to Redis, listing games...");
+    let games = redis.list_games()?;
+    println!("Games found: {:?}", games);
     Ok(json!({ 
         "statusCode": 200,
-        "body": "Joined game successfully"
+        "games": games
     }))
 }
 

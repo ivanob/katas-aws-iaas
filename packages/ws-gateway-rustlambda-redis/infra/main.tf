@@ -6,6 +6,8 @@ module "gateway"{
     source = "./gateway"
     vpc_id = module.vpc.vpc_id
     redis_endpoint = module.redis.redis_endpoint
+    vpc_security_group_ids = [module.vpc.lambda_sg_id]
+    vpc_subnet_ids = [module.vpc.private_subnet_id]
     depends_on = [ module.vpc ]
 }
 

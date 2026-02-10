@@ -15,6 +15,10 @@ resource "aws_lambda_function" "lambda_handle_game_actions" {
       REDIS_URL = "redis://${var.redis_endpoint}:6379"
     }
   }
+  vpc_config {
+    security_group_ids = var.vpc_security_group_ids
+    subnet_ids         = var.vpc_subnet_ids
+  }
 }
 
 data "archive_file" "zip_lambda_handle_game_actions" {
@@ -72,4 +76,34 @@ resource "aws_iam_policy" "ticketsoft_lambda_logging_policy" {
       }
     ]
   })
+}
+
+// The following permissions are for this lambda to call redis. When Lambda runs inside a VPC, it must create an ENI (Elastic Network Interface)
+// to connect to your VPC resources (like Redis).
+// This requires the ec2:CreateNetworkInterface, ec2:DescribeNetworkInterfaces, and ec2:DeleteNetworkInterface permissions.
+
+resource "aws_iam_policy" "lambda_vpc_access" {
+  name = "kata2-lambda-vpc-access"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ec2:CreateNetworkInterface",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteNetworkInterface",
+          "ec2:DescribeVpcs",
+          "ec2:DescribeSubnets",
+          "ec2:DescribeSecurityGroups"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_vpc_access_attach" {
+  role       = aws_iam_role.iam_for_lambda_game_actions.name
+  policy_arn = aws_iam_policy.lambda_vpc_access.arn
 }
