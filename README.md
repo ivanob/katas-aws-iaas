@@ -17,6 +17,7 @@ Here it goes the list of scenarios I have created and a brief description:
  - [ ] Kafka
  - [ ] SSO -> Single Sign On. frontend with 2 different domains sharing the same login credentials
  - [ ] gRPC protocol
+ - [ ] ECS Elastic Cloud Storage
 
 
 # ToDo
