@@ -62,6 +62,16 @@ resource "aws_security_group_rule" "lambda_to_redis" {
   source_security_group_id = aws_security_group.redis_sg.id
 }
 
+# Lambda can send messages back to API Gateway (for WebSocket postToConnection)
+resource "aws_security_group_rule" "lambda_to_apigw" {
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.lambda_sg.id
+}
+
 # Redis accepts traffic from Lambda on port 6379
 resource "aws_security_group_rule" "redis_from_lambda" {
   type                     = "ingress"

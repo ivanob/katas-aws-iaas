@@ -34,14 +34,20 @@ impl RedisHandler {
     }
 
     pub fn join_game(&mut self, game_id: &str) -> Result<String, Error> {
-        let game_state = self.connection
-            .get::<_, String>(format!("game:{}", game_id))?;
-        Ok(game_state)
+        // let game_state = self.connection
+        //     .get::<_, String>(format!("game:{}", game_id))?;
+        // Ok(game_state)
+        Ok("joined".to_string())
     }
 
     pub fn list_games(&mut self) -> Result<Vec<String>, Error> {
         let keys: Vec<String> = self.connection
             .keys("game:*")?;
         Ok(keys)
+    }
+
+    pub fn flush_db(&mut self) -> Result<(), Error> {
+        self.connection.flushdb::<()>()?;
+        Ok(())
     }
 }

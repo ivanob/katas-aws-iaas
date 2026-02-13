@@ -20,9 +20,9 @@ resource "aws_elasticache_cluster" "redis_cluster" {
   subnet_group_name    = aws_elasticache_subnet_group.redis_subnet_group.name
   security_group_ids   = [var.redis_sg_id]
 
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
   depends_on = [
     aws_elasticache_subnet_group.redis_subnet_group
   ]

@@ -14,7 +14,7 @@ While HTTP (REST) is a synchronous and unidirectional communication; Websockets 
 
 In this game the clients can connect at any time and send any request, but I will ignore those that does not make sense. For example if you are in a game and try to create another one, this last request will be ignored.
 
-REST API:
+REST API: (HTTP is a request/response protocol at the application layer.)
  - Request/Response model — client sends request, waits for response, connection closes
  - Synchronous — client blocks until response arrives
  - Unidirectional — only server responds to client requests 
@@ -27,12 +27,14 @@ Client: GET /games → waits
 Server: [game1, game2, game3] → connection closes
 ```
 
-WebSocket:
+WebSocket: (WebSockets are best described as a full-duplex, message-oriented, persistent protocol. NO request/response and NO application level ack, WE need to implement it if we want it)
 - Persistent, bidirectional stream — connection stays open
 - Asynchronous — client sends and doesn't wait for response
 - Bidirectional — both client and server can send anytime
 - Stateful — maintains connection state
 - Use case: Real-time apps (games, chat, notifications)
+WebSockets do NOT provide automatic application-level acknowledgments. You must send explicit messages back to the client if you want feedback. It
+is not like HTTP connections that wait for a response. Here you have to sxplicitly send the response from the server.
 Example:
 
 ```
@@ -42,6 +44,8 @@ Client: { op: "list" } → anytime
 Server: [game123, game456] → anytime
 Server: { board: [...] } → unsolicited push (from other player's move)
 ```
+
+The main difference between HTTP and WS is that HTTP is synchronous and waits for a response from the server, so if the message is lost or processing fails, the client gets an error immediately. In WS, the client sends a message and doesn't wait for a response—it only receives a TCP-level acknowledgment that the data arrived at the network level. We don't know by default if the server processed the message successfully or if it failed. If we want application-level feedback, we must have the server explicitly send a response message back to the client.
 
 <h3>Instructions</h3>
 In order to compile the rust code it is needed the package cargo-lambda
