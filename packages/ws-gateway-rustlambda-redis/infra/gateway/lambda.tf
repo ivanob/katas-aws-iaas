@@ -9,10 +9,13 @@ resource "aws_lambda_function" "lambda_handle_game_actions" {
   memory_size      = 128
   timeout          = 5
   source_code_hash = data.archive_file.zip_lambda_handle_game_actions.output_base64sha256
+  reserved_concurrent_executions = 10
   environment {
     variables = {
       ENVIRONMENT = "production",
       REDIS_URL = "redis://${var.redis_endpoint}:6379"
+      #WS_API_ENDPOINT = "https://${aws_apigatewayv2_api.api.id}.execute-api.${data.aws_region.current.name}.amazonaws.com/${aws_apigatewayv2_stage.production.name}"
+      WS_API_ENDPOINT = "https://${var.api_gateway_id}.execute-api.${data.aws_region.current.name}.amazonaws.com/production"
     }
   }
   vpc_config {
@@ -57,12 +60,12 @@ resource "aws_cloudwatch_log_group" "function_log_group" {
 
 resource "aws_iam_role_policy_attachment" "function_logging_policy_attachment" {
   role       = aws_iam_role.iam_for_lambda_game_actions.name
-  policy_arn = aws_iam_policy.ticketsoft_lambda_logging_policy.arn
+  policy_arn = aws_iam_policy.kata2_lambda_logging_policy.arn
 }
 
 # 
-resource "aws_iam_policy" "ticketsoft_lambda_logging_policy" {
-  name   = "ticketsoft-lambda-logging-policy-${aws_lambda_function.lambda_handle_game_actions.function_name}"
+resource "aws_iam_policy" "kata2_lambda_logging_policy" {
+  name   = "kata2-lambda-logging-policy-${aws_lambda_function.lambda_handle_game_actions.function_name}"
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -107,3 +110,27 @@ resource "aws_iam_role_policy_attachment" "lambda_vpc_access_attach" {
   role       = aws_iam_role.iam_for_lambda_game_actions.name
   policy_arn = aws_iam_policy.lambda_vpc_access.arn
 }
+
+data "aws_region" "current" {}
+
+# Add policy to allow Lambda to send messages via API Gateway Management API
+resource "aws_iam_role_policy" "lambda_apigateway_management" {
+  name = "kata2-lambda-apigateway-management-policy"
+  role = aws_iam_role.iam_for_lambda_game_actions.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "execute-api:ManageConnections",
+          "execute-api:Invoke"
+        ]
+        Resource = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${var.api_gateway_id}/*"
+      }
+    ]
+  })
+}
+
+data "aws_caller_identity" "current" {}

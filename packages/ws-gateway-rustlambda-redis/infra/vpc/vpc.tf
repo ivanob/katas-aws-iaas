@@ -91,3 +91,77 @@ resource "aws_security_group_rule" "redis_egress" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.redis_sg.id
 }
+
+# Create the NAT Gateway in a public subnet
+# This is needed to allow the Lambda function in the private subnet to access the internet (for API Gateway and CloudWatch Logs)
+# The reason for this lambda to access the internet is to be able to call the API Gateway management API to send messages back to clients,
+# Yes, this sounds a bit weird, but it's the only way to send messages back to clients from a Lambda function that is not directly invoked by API Gateway (i.e. from the default route handler).
+
+# 1. Create Internet Gateway
+resource "aws_internet_gateway" "kata2_igw" {
+  vpc_id = aws_vpc.kata2_vpc.id
+  
+  tags = {
+    Name = "kata2-igw"
+  }
+}
+
+# 2. Create a PUBLIC subnet
+resource "aws_subnet" "kata2_public_subnet" {
+  vpc_id                  = aws_vpc.kata2_vpc.id
+  cidr_block              = "10.0.1.0/24"  # Different from your private subnets
+  availability_zone       = data.aws_availability_zones.available.names[0]
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "kata2-public-subnet"
+  }
+}
+
+# 3. Create a route table for the public subnet
+resource "aws_route_table" "kata2_public_route_table" {
+  vpc_id = aws_vpc.kata2_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.kata2_igw.id
+  }
+
+  tags = {
+    Name = "kata2-public-route-table"
+  }
+}
+
+# 4. Associate the public subnet with the public route table
+resource "aws_route_table_association" "kata2_public_subnet_association" {
+  subnet_id      = aws_subnet.kata2_public_subnet.id
+  route_table_id = aws_route_table.kata2_public_route_table.id
+}
+
+# 5. Create Elastic IP for NAT Gateway
+resource "aws_eip" "nat_eip" {
+  domain = "vpc"
+
+  tags = {
+    Name = "kata2-nat-eip"
+  }
+}
+
+# 6. NOW create the NAT Gateway in the PUBLIC subnet
+resource "aws_nat_gateway" "kata2_nat" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.kata2_public_subnet.id  # Must be the PUBLIC subnet!
+
+  depends_on = [aws_internet_gateway.kata2_igw]
+
+  tags = {
+    Name = "kata2-nat-gateway"
+  }
+}
+
+# 7. Update your PRIVATE route table to route through the NAT Gateway
+resource "aws_route" "private_to_nat" {
+  route_table_id         = aws_route_table.kata2_private_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.kata2_nat.id
+}

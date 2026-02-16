@@ -30,7 +30,7 @@ async fn handler(event: LambdaEvent<Value>) -> Result<Value, Error> {
     let response = match route_key {
         "$connect" => handle_connect(&event),
         "$disconnect" => handle_disconnect(&event),
-        "$default" => handle_default(&event),
+        "$default" => handle_default(&event).await,
         _ => handle_unknown(&event),
     };
     println!("Response: {:?}", response);
@@ -59,7 +59,7 @@ fn handle_disconnect(event: &Value) -> Result<Value, Error> {
     }))
 }
 
-fn handle_default(event: &Value) -> Result<Value, Error> {
+async fn handle_default(event: &Value) -> Result<Value, Error> {
     println!("Processing game action...");
     
     // Parse the message body
@@ -73,9 +73,9 @@ fn handle_default(event: &Value) -> Result<Value, Error> {
     let action = request["action"].as_str().unwrap_or("unknown");
     
     match action {
-        "list" => handle_list_games(event, &request),
-        "create" => handle_create_game(event, &request, user_conn_id),
-        "reset" => handle_reset_game(event, &request),
+        "list" => handle_list_games(user_conn_id).await,
+        "create" => handle_create_game(event, &request, user_conn_id).await,
+        "reset" => handle_reset_game(event, &request).await,
         _ => Ok(json!({ 
             "statusCode": 400,
             "body": format!("Unknown action: {}", action)
@@ -83,18 +83,20 @@ fn handle_default(event: &Value) -> Result<Value, Error> {
     }
 }
 
-fn handle_list_games(event: &Value, request: &Value) -> Result<Value, Error> {
-    println!("Player listing games: {:?}", request);
+async fn handle_list_games(user_conn_id: &str) -> Result<Value, Error> {
+    println!("Player listing games");
     let mut redis = RedisHandler::connect_redis(&get_redis_url())?;
-    let games = redis.list_games()?;
+    let games = redis.list_games(user_conn_id).await?;
     println!("Games found: {:?}", games);
-    Ok(json!({ 
+
+    Ok(json!({  // This OK message goes to the Gateway, not to the client on the other end of the WS!!
+        // To send a message to the client I have to use the send_message_to_client(...) function.
         "statusCode": 200,
         "body": serde_json::to_string(&games)?
     }))
 }
 
-fn handle_create_game(event: &Value, request: &Value, user_conn_id: &str) -> Result<Value, Error> {
+async fn handle_create_game(event: &Value, request: &Value, user_conn_id: &str) -> Result<Value, Error> {
     println!("Player creating game: {:?}", request);
     let mut redis = RedisHandler::connect_redis(&get_redis_url())?;
     redis.create_game(user_conn_id)?;
@@ -105,7 +107,7 @@ fn handle_create_game(event: &Value, request: &Value, user_conn_id: &str) -> Res
     }))
 }
 
-fn handle_reset_game(event: &Value, request: &Value) -> Result<Value, Error> {
+async fn handle_reset_game(event: &Value, request: &Value) -> Result<Value, Error> {
     println!("Resetting game: {:?}", request);
     let mut redis = RedisHandler::connect_redis(&get_redis_url())?;
     redis.flush_db()?;

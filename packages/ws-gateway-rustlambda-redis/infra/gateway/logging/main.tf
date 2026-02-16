@@ -10,11 +10,11 @@ resource "aws_cloudwatch_log_group" "function_log_group" {
 
 resource "aws_iam_role_policy_attachment" "function_logging_policy_attachment" {
   role       = var.iam_lambda_role_id
-  policy_arn = aws_iam_policy.ticketsoft_lambda_logging_policy.arn
+  policy_arn = aws_iam_policy.kata2_lambda_logging_policy.arn
 }
 
-resource "aws_iam_policy" "ticketsoft_lambda_logging_policy" {
-  name   = "ticketsoft-lambda-logging-policy-${var.function_name}-${local.env}"
+resource "aws_iam_policy" "kata2_lambda_logging_policy" {
+  name   = "kata2-lambda-logging-policy-${var.function_name}-${local.env}"
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [

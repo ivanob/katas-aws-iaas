@@ -17,3 +17,8 @@ variable "vpc_subnet_ids" {
   description = "List of subnet IDs for the Lambda function to access Redis"
   type        = list(string)
 }
+
+variable "api_gateway_id" {
+  description = "The ID of the API Gateway for WebSocket connections"
+  type        = string
+}

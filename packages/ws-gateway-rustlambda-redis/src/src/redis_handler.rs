@@ -1,5 +1,46 @@
 use redis::Commands;
 use lambda_runtime::Error;
+use aws_sdk_apigatewaymanagement as apigatewaymanagement;
+use aws_config;
+use aws_smithy_types::Blob;
+
+async fn send_message_to_client(
+    connection_id: &str,
+    message: &str,
+) -> Result<(), Error> {
+    // Get the WebSocket API endpoint from environment variable
+    let endpoint = std::env::var("WS_API_ENDPOINT")
+        .expect("WS_API_ENDPOINT environment variable not set");
+    
+    println!("Sending message to connection: {}, endpoint: {}", connection_id, endpoint);
+    
+    let config = aws_config::load_from_env().await;
+    
+    // Build custom config with the WebSocket endpoint
+    let api_config = aws_sdk_apigatewaymanagement::config::Builder::from(&config)
+        .endpoint_url(endpoint)
+        .build();
+    
+    let client = aws_sdk_apigatewaymanagement::Client::from_conf(api_config);
+    
+    let result = client
+        .post_to_connection()
+        .connection_id(connection_id)
+        .data(aws_smithy_types::Blob::new(message.as_bytes()))
+        .send()
+        .await;
+    
+    match result {
+        Ok(_) => {
+            println!("Message sent successfully to {}", connection_id);
+            Ok(())
+        }
+        Err(e) => {
+            println!("Failed to send message: {:?}", e);
+            Err(Error::from(format!("Failed to send message: {}", e)))
+        }
+    }
+}
 
 pub struct RedisHandler {
     connection: redis::Connection,
@@ -40,9 +81,10 @@ impl RedisHandler {
         Ok("joined".to_string())
     }
 
-    pub fn list_games(&mut self) -> Result<Vec<String>, Error> {
+    pub async fn list_games(&mut self, connection_id: &str) -> Result<Vec<String>, Error> {
         let keys: Vec<String> = self.connection
             .keys("game:*")?;
+        send_message_to_client(connection_id, &format!("Games found: {:?}", keys)).await;
         Ok(keys)
     }
 
