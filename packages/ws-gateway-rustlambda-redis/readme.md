@@ -27,7 +27,7 @@ Client: GET /games → waits
 Server: [game1, game2, game3] → connection closes
 ```
 
-WebSocket: (WebSockets are best described as a full-duplex, message-oriented, persistent protocol. NO request/response and NO application level ack, WE need to implement it if we want it)
+WebSocket: (WebSockets are best described as a full-duplex, message-oriented, persistent protocol. NO request/response and NO application level ACK, WE need to implement it if we want it)
 - Persistent, bidirectional stream — connection stays open
 - Asynchronous — client sends and doesn't wait for response
 - Bidirectional — both client and server can send anytime
@@ -52,6 +52,14 @@ In order to compile the rust code it is needed the package cargo-lambda
 `cargo install cargo-lambda`
 
 The websocket connection can be tested with: https://websocketking.com/
+
+Another recommended CLI WS client is wscat:
+
+```
+npm install -g wscat
+```
+
+![Architecture diagram](./res/wscat.png)
 
 <h3>List of WS Custom route keys</h3>
 
