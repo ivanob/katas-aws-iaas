@@ -3,6 +3,7 @@ use lambda_runtime::Error;
 use aws_sdk_apigatewaymanagement as apigatewaymanagement;
 use aws_config;
 use aws_smithy_types::Blob;
+use crate::tictactoe_engine::TicTacToeEngine;
 
 async fn send_message_to_client(
     connection_id: &str,
@@ -67,7 +68,7 @@ impl RedisHandler {
     // }
 
     pub async fn create_game(&mut self, user_conn_id: &str) -> Result<(), Error> {
-        let initial_state: &str = &format!("{{\"board\":[[0,0,0],[0,0,0],[0,0,0]],\"currentPlayer\":1,\"status\":\"waiting_oponent\",\"players\":[{:?}]}}", user_conn_id);
+        let initial_state = TicTacToeEngine::new(user_conn_id);
         self.connection
             .set::<_, _, ()>(format!("game:{}", user_conn_id), initial_state)?;
         send_message_to_client(user_conn_id, &format!("Game created: {:?}", user_conn_id)).await;
@@ -75,22 +76,10 @@ impl RedisHandler {
     }
 
     pub async fn join_game(&mut self, game_id: &str, user_conn_id: &str) -> Result<String, Error> {
-        let game_state_str: String = self.connection
-            .get(format!("game:{}", game_id))?;
-        let mut game_state: serde_json::Value = serde_json::from_str(&game_state_str)?;
-        if game_state["status"] == "waiting_oponent" {
-            if let Some(players) = game_state["players"].as_array_mut() {
-                players.push(serde_json::json!(user_conn_id));
-            }
-            game_state["status"] = serde_json::json!("in_progress");
-            // Save the modified state back to Redis
-            let updated_state = serde_json::to_string(&game_state)?;
-            self.connection.set::<_, _, ()>(format!("game:{}", game_id), updated_state)?;
-            send_message_to_client(game_id, &format!("Joined sucessfully to game {}", game_id)).await?;
-        } else {
-            send_message_to_client(game_id, &format!("Game: {} not found or maybe it is already full", game_id)).await?;
-        }
-        println!("Game state for {}: {}", game_id, game_state);
+        // let game_state_str: String = self.connection
+        //     .get(format!("game:{}", game_id))?;
+        
+        // println!("Game state for {}: {}", game_id, game_state);
         Ok("joined".to_string())
     }
 
@@ -118,29 +107,29 @@ impl RedisHandler {
     }
 
     pub async fn make_move(&mut self, game_id: &str, x: usize, y: usize, player_id: &str) -> Result<(), Error> {
-        let game_state_str: String = self.connection
-            .get(format!("game:{}", game_id))?;
-        let mut game_state: serde_json::Value = serde_json::from_str(&game_state_str)?;
+        // let game_state_str: String = self.connection
+        //     .get(format!("game:{}", game_id))?;
+        // let mut game_state: serde_json::Value = serde_json::from_str(&game_state_str)?;
         
-        if game_state["status"] == "in_progress" {
-            if let Some(board) = game_state["board"].as_array_mut() {
-                if board[y][x] == 0 {
-                    let current_player = game_state["currentPlayer"].as_u64().unwrap_or(1);
-                    board[y][x] = (current_player as i64).into();
-                    // Switch player
-                    game_state["currentPlayer"] = serde_json::json!(if current_player == 1 { 2 } else { 1 });
-                    // Save the modified state back to Redis
-                    let updated_state = serde_json::to_string(&game_state)?;
-                    self.connection.set::<_, _, ()>(format!("game:{}", game_id), updated_state)?;
-                    send_message_to_client(game_id, &format!("Move made at ({}, {}) by player {}", x, y, player_id)).await?;
-                } else {
-                    send_message_to_client(game_id, &format!("Invalid move at ({}, {}) - cell already occupied", x, y)).await?;
-                }
-            }
-        } else {
-            send_message_to_client(game_id, "Game not in progress").await?;
-        }
-        println!("Game state for {}: {}", game_id, game_state);
+        // if game_state["status"] == "in_progress" {
+        //     if let Some(board) = game_state["board"].as_array_mut() {
+        //         if board[y][x] == 0 {
+        //             let current_player = game_state["currentPlayer"].as_u64().unwrap_or(1);
+        //             board[y][x] = (current_player as i64).into();
+        //             // Switch player
+        //             game_state["currentPlayer"] = serde_json::json!(if current_player == 1 { 2 } else { 1 });
+        //             // Save the modified state back to Redis
+        //             let updated_state = serde_json::to_string(&game_state)?;
+        //             self.connection.set::<_, _, ()>(format!("game:{}", game_id), updated_state)?;
+        //             send_message_to_client(game_id, &format!("Move made at ({}, {}) by player {}", x, y, player_id)).await?;
+        //         } else {
+        //             send_message_to_client(game_id, &format!("Invalid move at ({}, {}) - cell already occupied", x, y)).await?;
+        //         }
+        //     }
+        // } else {
+        //     send_message_to_client(game_id, "Game not in progress").await?;
+        // }
+        // println!("Game state for {}: {}", game_id, game_state);
         Ok(())
     }
 }

@@ -1,6 +1,7 @@
 use lambda_runtime::{service_fn, Error, LambdaEvent};
 use serde_json::{json, Value};
 mod redis_handler;
+mod tictactoe_engine;
 use redis_handler::RedisHandler;
 
 #[tokio::main]
@@ -99,7 +100,11 @@ async fn handle_default(event: &Value) -> Result<Value, Error> {
             let y_str = request["col"].as_str().unwrap_or("unknown");
             let y_usize = y_str.parse().unwrap_or(0);
             println!("Move details - Row: {}, Col: {}, Player: {}", x_usize, y_usize, user_conn_id);
-            redis.make_move(id, x_usize, y_usize, user_conn_id).await
+            redis.make_move(id, x_usize, y_usize, user_conn_id).await?;
+            Ok(json!({ 
+                "statusCode": 200,
+                "body": "Move executed successfully!"
+            }))
         }
         "debug" => {
             println!("Debugging Redis DB");
@@ -117,7 +122,8 @@ async fn handle_default(event: &Value) -> Result<Value, Error> {
 }
 
 async fn handle_list_games(user_conn_id: &str, redis: &mut RedisHandler) -> Result<Value, Error> {
-    let games = redis.list_games(user_conn_id).await?;
+    // let games = redis.list_games(user_conn_id).await?;
+    let games = "";
     Ok(json!({  // This OK message goes to the Gateway, not to the client on the other end of the WS!!
         // To send a message to the client I have to use the send_message_to_client(...) function.
         "statusCode": 200,
