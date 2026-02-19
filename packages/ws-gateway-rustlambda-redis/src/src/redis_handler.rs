@@ -76,10 +76,10 @@ impl RedisHandler {
     }
 
     pub async fn join_game(&mut self, game_id: &str, user_conn_id: &str) -> Result<String, Error> {
-        // let game_state_str: String = self.connection
-        //     .get(format!("game:{}", game_id))?;
-        
-        // println!("Game state for {}: {}", game_id, game_state);
+        let game_state_str: String = self.connection
+            .get(format!("game:{}", game_id))?;
+        TicTacToeEngine::join_game(game_state_str, user_conn_id)
+            .map_err(|e| Error::from(format!("Failed to join game: {}", e)))?;
         Ok("joined".to_string())
     }
 
@@ -107,29 +107,18 @@ impl RedisHandler {
     }
 
     pub async fn make_move(&mut self, game_id: &str, x: usize, y: usize, player_id: &str) -> Result<(), Error> {
-        // let game_state_str: String = self.connection
-        //     .get(format!("game:{}", game_id))?;
-        // let mut game_state: serde_json::Value = serde_json::from_str(&game_state_str)?;
-        
-        // if game_state["status"] == "in_progress" {
-        //     if let Some(board) = game_state["board"].as_array_mut() {
-        //         if board[y][x] == 0 {
-        //             let current_player = game_state["currentPlayer"].as_u64().unwrap_or(1);
-        //             board[y][x] = (current_player as i64).into();
-        //             // Switch player
-        //             game_state["currentPlayer"] = serde_json::json!(if current_player == 1 { 2 } else { 1 });
-        //             // Save the modified state back to Redis
-        //             let updated_state = serde_json::to_string(&game_state)?;
-        //             self.connection.set::<_, _, ()>(format!("game:{}", game_id), updated_state)?;
-        //             send_message_to_client(game_id, &format!("Move made at ({}, {}) by player {}", x, y, player_id)).await?;
-        //         } else {
-        //             send_message_to_client(game_id, &format!("Invalid move at ({}, {}) - cell already occupied", x, y)).await?;
-        //         }
-        //     }
-        // } else {
-        //     send_message_to_client(game_id, "Game not in progress").await?;
-        // }
-        // println!("Game state for {}: {}", game_id, game_state);
+        let game_state_str: String = self.connection
+            .get(format!("game:{}", game_id))?;
+        let mut game_state: serde_json::Value = serde_json::from_str(&game_state_str)?;
+        match TicTacToeEngine::make_move(game_state_str, x, y, 1) {
+            Ok(updated_state) => {
+                self.connection.set::<_, _, ()>(format!("game:{}", game_id), updated_state.clone())?;
+                send_message_to_client(game_id, &format!("Move made at ({}, {}) by player {}", x, y, player_id)).await?;
+            },
+            Err(err_msg) => {
+                send_message_to_client(game_id, &format!("Invalid move at ({}, {}) - {}", x, y, err_msg)).await?;
+            }
+        };
         Ok(())
     }
 }
