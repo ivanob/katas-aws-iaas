@@ -13,8 +13,10 @@ Here it goes the list of scenarios I have created and a brief description:
  - [X] Graphql in api gateway
  - [X] ALB (ELB) to ECS with Fargate tasks (instead of EC2)
  - [X] Websocket implementation with api gateway and lambdas (Rust) + Memcached (Redis) storage. (Tic-Tac-Toe)
- - [ ] Deployment of frontend in Amplify (NextJS). Frontend for Tic-tac-toe game
  - [ ] Bedrock
+ - [ ] Deployment of frontend in Amplify (NextJS). Frontend for Tic-tac-toe game
+ - [ ] Eventbridge. Implementation of CQRS
+ - [ ] Eventbridge vs SNS. Filtering vs routing.
  - [ ] Kafka. Implementation of CQRS.
  - [ ] SSO -> Single Sign On. frontend with 2 different domains sharing the same login credentials
  - [ ] gRPC protocol
