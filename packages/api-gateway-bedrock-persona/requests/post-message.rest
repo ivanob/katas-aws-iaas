@@ -1,0 +1,7 @@
+curl -X 'POST' \
+  'https://9pheoxjxnd.execute-api.eu-west-1.amazonaws.com/prod/conversation' \
+  -H 'accept: application/json' \
+  -d '{
+  "eventId": "0aaea7cf-7ada-4be2-ade0-2d7d8c71d69",
+  "ticketId": 0
+}'

@@ -1,0 +1,25 @@
+{
+  "name": "katas-api-gateway-bedrock-persona",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "esbuild ./src/handler.ts --bundle --platform=node --target=es2020 --outfile=dist/handler.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "esbuild": "^0.17.11",
+    "aws-lambda": "^1.0.7",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.111",
+    "@types/node": "^18.15.0",
+    "ts-loader": "^9.4.2",
+    "@types/uuid": "^9.0.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
