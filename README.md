@@ -22,6 +22,13 @@ Here it goes the list of scenarios I have created and a brief description:
  - [ ] gRPC protocol
  - [ ] ECS Elastic Cloud Storage
  - [ ] Step functions implementation
+ - [ ] EC2 connected to several AWS services via software: gateway, sns, sqs...
+ - [ ] Automatizar el despliegue de un ec2 desde que hago el push al ecr, usando codebuild o github actions
+ - [ ] La kata definitiva. Meterle mano a EKS
+ - [ ] Desplegar dos microservices que trabajan together en ec2 y que se sincronicen. Eks? Ecs? Integrado con CICD
+ - [ ] Ec2 integrado con cognito
+ - [ ] Cognito hosted. 2 domains with two frontends using SSO. Find a way to do this
+ - [ ] Cached responses with AWS gateway. Invalidate caches, different caching policies...
 
 
 # Dismissed
