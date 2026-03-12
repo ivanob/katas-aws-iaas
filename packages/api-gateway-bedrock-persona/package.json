@@ -9,15 +9,17 @@
     "test": "jest"
   },
   "dependencies": {
-    "esbuild": "^0.17.11",
+    "@aws-sdk/client-bedrock-runtime": "^3.1006.0",
+    "@aws-sdk/middleware-websocket": "^3.972.12",
     "aws-lambda": "^1.0.7",
+    "esbuild": "^0.17.11",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.111",
     "@types/node": "^18.15.0",
-    "ts-loader": "^9.4.2",
-    "@types/uuid": "^9.0.1"
+    "@types/uuid": "^9.0.1",
+    "ts-loader": "^9.4.2"
   },
   "keywords": [],
   "author": "",
